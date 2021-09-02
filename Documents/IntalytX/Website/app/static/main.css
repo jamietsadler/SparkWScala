@@ -1,0 +1,29 @@
+@import url(http://fonts.googleapis.com/css?family=Dosis:300,400,500,600,700);
+
+body, html {
+    height: 100%;
+    font-family: 'Saira Semi Condensed', sans-serif;
+  }
+  
+  .bg {
+    /* The image used */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)), url("/static/images/background-1.jpeg");
+    opacity: 0.9;
+    /* Full height */
+    height: 100%;
+    width: 100%;
+  
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  h1 {
+    font-size: 60px;
+    color: white;
+    font-family: 'Dosis', sans-serif;
+  }
+
+ h3{
+      color: white;
+      font-family: 'Dosis', sans-serif;
+  }
