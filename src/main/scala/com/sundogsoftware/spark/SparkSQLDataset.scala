@@ -14,15 +14,16 @@ object SparkSQLDataset {
     Logger.getLogger("org").setLevel(Level.ERROR)
     
     // Use SparkSession interface
-    val spark = SparkSession
-      .builder
-      .appName("SparkSQL")
+
+    val sparksesh = SparkSession
+      .builder()
+      .appName("sparksql")
       .master("local[*]")
       .getOrCreate()
 
     // Load each line of the source data into an Dataset
-    import spark.implicits._
-    val schemaPeople = spark.read
+    import sparksesh.implicits._
+    val schemaPeople = sparksesh.read
       .option("header", "true")
       .option("inferSchema", "true")
       .csv("data/fakefriends.csv")
@@ -32,12 +33,12 @@ object SparkSQLDataset {
     
     schemaPeople.createOrReplaceTempView("people")
 
-    val teenagers = spark.sql("SELECT * FROM people WHERE age >= 13 AND age <= 19")
+    val teenagers = sparksesh.sql("SELECT * FROM people WHERE age >= 13 AND age <= 19")
     
     val results = teenagers.collect()
     
     results.foreach(println)
     
-    spark.stop()
+    sparksesh.stop()
   }
 }
