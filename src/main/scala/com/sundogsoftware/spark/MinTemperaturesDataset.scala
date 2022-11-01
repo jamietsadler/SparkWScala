@@ -7,8 +7,7 @@ import org.apache.spark.sql.functions._
 
 /** Find the minimum temperature by weather station */
 object MinTemperaturesDataset {
-
-  case class Temperature(stationID: String, date: Int, measure_type: String, temperature: Float)
+  case class Temp(stationID:String, date: Int, measure_type: String, temperature: Float)
 
   /** Our main function where the action happens */
   def main(args: Array[String]) {
@@ -23,7 +22,7 @@ object MinTemperaturesDataset {
       .master("local[*]")
       .getOrCreate()
 
-    val temperatureSchema = new StructType()
+    val tempSchema = new StructType()
       .add("stationID", StringType, nullable = true)
       .add("date", IntegerType, nullable = true)
       .add("measure_type", StringType, nullable = true)
@@ -32,9 +31,10 @@ object MinTemperaturesDataset {
     // Read the file as dataset
     import spark.implicits._
     val ds = spark.read
-      .schema(temperatureSchema)
+      .schema(tempSchema)
       .csv("data/1800.csv")
-      .as[Temperature]
+      .as[Temp]
+
     
     // Filter out all but TMIN entries
     val minTemps = ds.filter($"measure_type" === "TMIN")
@@ -52,12 +52,29 @@ object MinTemperaturesDataset {
 
     // Collect, format, and print the results
     val results = minTempsByStationF.collect()
-    
+
+    val maxTemps = ds.filter($"measure_type" === "TMAX")
+    val stationTempsMax = maxTemps.select("stationID", "temperature")
+    val maxTempsByStation = stationTemps.groupBy("stationID").max("temperature")
+    val maxTempsByStationF = maxTempsByStation
+      .withColumn("temperature", round($"max(temperature)" * 0.1f * (9.0f / 5.0f) + 32.0f, 2))
+      .select("stationID", "temperature").sort("temperature")
+    val resultsMax = maxTempsByStationF.collect()
+
+
+
     for (result <- results) {
        val station = result(0)
        val temp = result(1).asInstanceOf[Float]
        val formattedTemp = f"$temp%.2f F"
        println(s"$station minimum temperature: $formattedTemp")
+    }
+
+    for (result <- resultsMax) {
+      val station = result(0)
+      val temp = result(1).asInstanceOf[Float]
+      val formattedTemp = f"$temp%.2f F"
+      println(s"$station maximum temperature: $formattedTemp")
     }
   }
 }
