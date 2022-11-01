@@ -41,6 +41,9 @@ object MostPopularSuperheroDataset {
       .text("data/Marvel-graph.txt")
       .as[SuperHero]
 
+    names.show()
+    lines.show()
+
     val connections = lines
       .withColumn("id", split(col("value"), " ")(0))
       .withColumn("connections", size(split(col("value"), " ")) - 1)
@@ -50,6 +53,7 @@ object MostPopularSuperheroDataset {
         .sort($"connections".desc)
         .first()
 
+    println(mostPopular)
     val mostPopularName = names
       .filter($"id" === mostPopular(0))
       .select("name")
