@@ -25,6 +25,7 @@ object FriendsByAgeDataset {
 
     // Load each line of the source data into an Dataset
     import spark.implicits._
+
     val ds = spark.read
       .option("header", "true")
       .option("inferSchema", "true")
@@ -39,6 +40,9 @@ object FriendsByAgeDataset {
 
     // Sorted:
     friendsByAge.groupBy("age").avg("friends").sort("age").show()
+
+    friendsByAge.groupBy("age").avg("friends").sort(desc("avg(friends)")).show()
+
 
     // Formatted more nicely:
     friendsByAge.groupBy("age").agg(round(avg("friends"), 2))
