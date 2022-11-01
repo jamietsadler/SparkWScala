@@ -39,6 +39,9 @@ object PopularMoviesDataset {
       .schema(moviesSchema)
       .csv("data/ml-100k/u.data")
       .as[Movie]
+
+
+    moviesDS.show()
     
     // Some SQL-style magic to sort all movies by popularity in one line!
     val topMovieIDs = moviesDS.groupBy("movieID").count().orderBy(desc("count"))
