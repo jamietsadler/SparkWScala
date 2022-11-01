@@ -14,9 +14,10 @@ object DataFramesDataset {
     Logger.getLogger("org").setLevel(Level.ERROR)
     
     // Use new SparkSession interface in Spark 2.0
+
+
     val spark = SparkSession
-      .builder
-      .appName("SparkSQL")
+      .builder.appName("sparksql")
       .master("local[*]")
       .getOrCreate()
 
@@ -35,6 +36,8 @@ object DataFramesDataset {
     
     println("Here is our inferred schema:")
     people.printSchema()
+
+    people.show()
     
     println("Let's select the name column:")
     people.select("name").show()
@@ -43,6 +46,9 @@ object DataFramesDataset {
     people.filter(people("age") < 21).show()
    
     println("Group by age:")
+    people.groupBy("age").count().show()
+
+    println("grouped By age:")
     people.groupBy("age").count().show()
     
     println("Make everyone 10 years older:")
